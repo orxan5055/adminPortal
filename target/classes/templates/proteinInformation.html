@@ -1,0 +1,42 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+<head th:replace="common/headerPart :: common-headerPart" />
+
+<body>
+	<div th:replace="common/headerPart :: navbar" ></div>
+       <div class="container">
+         <div>
+            <ol class="breadcrumb">
+              <li><a th:href="@{/protein/proteinList}"><i class="fa fa-hand-o-left" aria-hidden="true"></i> Go back</a></li>
+              <li> <a th:href="@{/protein/editProteinInfo?id=}+${protein.id}">Edit</a>
+            </ol>
+         </div>
+         <div class="row">
+           <div class="col-xs-3">
+               <div class="panel panel-default">
+                 <div class="panel-body">
+                   <img th:src="@{/images/protein/}+${protein.id}+'.png'" class="img-responsive center-block"/>
+                 </div>
+               </div>  
+           </div>
+           <div class="col-xs-9">
+             <h3 th:text="${protein.basliq}"></h3>
+             <div class="row">
+               <div class="col-xs-6">
+                
+                <p><strong>Category:</strong><span th:text="${protein.kategoriya}"></span></p>
+
+                <p><strong>Shipping Weight:</strong><span th:text="${protein.catdirilmaCekisi}"></span> kq</p>
+                <p><strong>List Price:</strong><span th:text="${protein.olanQiymet}"></span>$</p>
+                <p><strong>Our Price:</strong><span th:text="${protein.bizimQiymet}"></span>$</p>
+                <p><strong>Number in Stock: </strong><span th:text="${protein.stokdakiSay}"></span> </p>
+               </div>
+             </div>
+              <p><Strong>Usage: </Strong><span th:utext="${protein.aciqlama}"></span></p>
+           </div>
+         </div>
+       </div>
+	<div th:replace="common/headerPart :: body-bottom-scripts" ></div>
+</body>
+</html>

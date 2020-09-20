@@ -1,0 +1,143 @@
+
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1000/xhtml">
+<head th:replace="common/headerPart :: common-headerPart" />
+
+<body>
+	<div th:replace="common/headerPart :: navbar" />
+	
+	<div class="container">
+		<div class="table-responsive">
+			<table id="proteinListTable" class="table table-bordered table-hover table-striped">
+				<thead>
+					<tr>
+					<th><input th:id="selectAllProducts" type="checkbox" /></th>
+						<th>Title</th>
+						<th>Category</th>
+						<th>List Price</th>
+						<th>Our Price</th>
+						<th>Active?</th>
+						<th>Operation</th>
+					</tr>
+				</thead>
+				<tbody>
+					<tr data-th-each="protein : ${proteinList}">
+						 <td>
+						 <input hidden="hidden" name="id" th:value="${protein.id}" />
+						 <input th:id="'selected'+${protein.id}" class="checkboxProduct" type="checkbox" />
+						 </td> 
+						<td><a th:href="@{/protein/proteinInformation(id=${protein.id})}"><span th:text="${protein.basliq}"></span></a></td>
+						<td th:text="${protein.kategoriya}"></td>
+						<td th:text="${protein.olanQiymet}"></td>
+						<td th:text="${protein.bizimQiymet}"></td>
+						<td th:text="${protein.aktiv}"></td>
+						<td>
+							<input hidden="hidden" name="id" th:value="${protein.id}" />
+							<button th:id="'oneProduct-'+${protein.id}" class="btn btn-danger btn-xs delete-product" type="submit" value="delete" >
+							<span class="fa fa-trash"></span> Delete</button>
+						</td>
+					</tr>
+				</tbody>
+			</table>
+		</div>
+	<button th:id="deleteSelected" class="btn btn-danger ">Delete Selected Items</button>
+	</div>
+	
+	
+	<div th:replace="common/headerPart :: body-bottom-scripts" />
+	
+	<script>
+		$(document).ready(function() {
+			$("#proteinListTable").DataTable({
+				"lengthMenu": [
+					[5,10,15,20,-1],[5,10,15,20,"All"]
+					],
+				"ordering": false,
+				stateSave: true
+			});
+		});
+		$(document).ready(function() {
+			$('.delete-product').on('click', function (){
+				/*<![CDATA[*/
+			    var path = /*[[@{/}]]*/'remove';
+			    /*]]>*/
+				
+				var id=$(this).attr('id');
+				
+				bootbox.confirm({
+					message: "Are you sure to remove this item? It can't be got back.",
+					buttons: {
+						cancel: {
+							label:'<i class="fa fa-times"></i> Cancel'
+						},
+						confirm: {
+							label:'<i class="fa fa-check"></i> Confirm'
+						}
+					},
+					callback: function(confirmed) {
+						if(confirmed) {
+							$.post(path, {'id':id}, function(res) {
+								location.reload();
+							});
+						}
+					}
+				});
+			});
+			
+			$('#deleteSelected').click(function() {
+				var idList= $('.checkboxProduct');
+				var productIdList=[];
+				for (var i = 0; i < idList.length; i++) {
+					if(idList[i].checked==true) {
+						productIdList.push(idList[i]['id'])
+					}
+				}
+				
+				console.log(productIdList);
+				
+				/*<![CDATA[*/
+			    var path = /*[[@{/}]]*/'removeList';
+			    /*]]>*/
+			    
+			    bootbox.confirm({
+					message: "Are you sure to remove all selected products? They can't be got back.",
+					buttons: {
+						cancel: {
+							label:'<i class="fa fa-times"></i> Cancel'
+						},
+						confirm: {
+							label:'<i class="fa fa-check"></i> Confirm'
+						}
+					},
+					callback: function(confirmed) {
+						if(confirmed) {
+							$.ajax({
+								type: 'POST',
+								url: path,
+								data: JSON.stringify(productIdList),
+								contentType: "application/json",
+								success: function(res) {
+									console.log(res); 
+									location.reload()
+									},
+								error: function(res){
+									console.log(res); 
+									location.reload();
+									}
+							});
+						}
+					}
+				});
+			});
+			
+			$("#selectAllProducts").click(function() {
+				if($(this).prop("checked")==true) {
+					$(".checkboxProduct").prop("checked",true);
+				} else if ($(this).prop("checked")==false) {
+					$(".checkboxProduct").prop("checked",false);
+				}
+			})
+		});
+	</script>
+</body>
+</html>
